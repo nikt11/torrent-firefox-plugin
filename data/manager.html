@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>x</title>
+    <link rel="stylesheet" href="css/rtm.css"/>
+</head>
+<body>
+    <div id="border"></div>
+    <div id="wrapper">
+        <form action="#/search" id="search">
+            <label for="q">Get me torrents for</label>
+            <input autocomplete="off" name="q" id="q" placeholder="Slackware ISO" type="text" />
+            <button><span class="go"></span></button>
+        </form>
+        <div id="results" class="hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="title">Title</th>
+                        <th class="size">Size</th>
+                        <th class="seeds">Seeds</th>
+                        <th class="peers">Peers</th>
+                        <th class="download"></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
