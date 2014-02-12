@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>rootnode Torrent Manager</title>
+    <link rel="stylesheet" href="css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/rtm.css"/>
+</head>
+<body class="auth-body">
+    <div id="border"></div>
+    <div id="wrapper" class="auth">
+        <h1 class="project-logo"><a href="http://rootnode.net/torrent"></a></h1>
+        <div id="login-error" style="display: none;">
+            <strong>Error</strong> : <span id="login-error-message"></span>
+        </div>
+        <form action="#/auth" id="auth">
+            <label for="login">Username</label>
+            <input id="login" type="text" name="login" required>
+            <label for="password">Password</label>
+            <input id="password" type="password" name="login" required>
+            <button type="submit" class="button" id="submit-auth">Login</button>
+        </form>
+    </div>
+    <div id="loadingmask"></div>
+</body>
+</html>

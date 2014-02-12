@@ -1,20 +1,18 @@
 <html>
 <head>
     <title>rootnode Torrent Manager</title>
-    <link rel="stylesheet" href="css/rtm.css"/>
+    <link rel="stylesheet" href="css/rtm.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css"/>
 </head>
 <body>
     <div id="border"></div>
     <div id="wrapper">
-        <div id="results">
+        <div id="results" class="list">
             <table>
                 <thead>
                     <tr>
                         <th class="title">Title</th>
-                        <th class="size">Size</th>
-                        <th class="seeds">Completed</th>
                         <th class="peers">Added at</th>
-                        <th class="download">Downrate</th>
                         <th class="actions">Actions</th>
                     </tr>
                 </thead>
@@ -22,5 +20,6 @@
             </table>
         </div>
     </div>
+    <div id="loadingmask"></div>
 </body>
 </html>
