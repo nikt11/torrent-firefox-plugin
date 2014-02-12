@@ -68,9 +68,7 @@ if (window.location.pathname.match(/auth.html/)) {
 }
 
 if (window.location.pathname.match(/view.html/)) {
-    setInterval(function() {
-        console.log('x', window.frameElement, 'y');
-    }, 1000);
+    document.getElementById('view').src = 'http://torrent-frontend1.sys.rootnode.net/get/123';
 }
 
 self.port.on('torrentsList', function(list) {
@@ -138,6 +136,7 @@ self.port.on('queuedTorrentsList', function(list) {
         rows += '<tr class="noitems"><td colspan="3">No queued torrents at the moment.<br>Maybe, <a href="manager.html">try another query</a>?</td></tr>';
     }
 
+
     for(var l = 0; l < list.length; l += 1) {
         bytes_done = normalize(list[l].bytes_done);
         size_bytes = normalize(list[l].size_bytes);
@@ -147,7 +146,7 @@ self.port.on('queuedTorrentsList', function(list) {
         rows += '<tr>';
         rows += '<td class="title">' + list[l].name + '</td>';
         rows += '<td class="peers">' + added_at + '</td>';
-        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="#" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '"><i class="fa fa-download"></i></a> <a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
+        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="view.html#' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '"><i class="fa fa-download"></i></a> <a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
         rows += '</tr>';
     }
     res.innerHTML += rows;
