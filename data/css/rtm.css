@@ -832,3 +832,12 @@ body {
     animation-duration: 1s;
     animation-fill-mode: both;
 }
+
+#browser li {
+    list-style: none;
+    padding: 4px 0;
+}
+
+#browser li i {
+    width: 25px;
+}

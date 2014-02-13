@@ -1,5 +1,6 @@
 self.port.emit('validateAuth', false);
 
+CONTENTSURL = 'http://torrent-frontend1.sys.rootnode.net/get';
 var invokeQuery = function(value) {
     var query = document.getElementById('q');
     value = value === undefined ? query.value : value;
@@ -68,8 +69,227 @@ if (window.location.pathname.match(/auth.html/)) {
 }
 
 if (window.location.pathname.match(/view.html/)) {
-    document.getElementById('view').src = 'http://torrent-frontend1.sys.rootnode.net/get/123';
+    var path = window.location.search.replace(/^\?/, '/');
+
+    self.port.emit('getTorrentContents', {path: path})
 }
+
+self.port.on('torrentContents', function(html) {
+    var div = document.createElement('div');
+    var browser = document.getElementById('browser');
+    var list = document.createElement('ul');
+
+    div.innerHTML = html;
+
+    Array.prototype.slice.call(div.querySelectorAll('pre a')).forEach(function(link) {
+        var li = document.createElement('li');
+        var href = link.getAttribute('href');
+
+        if (href.slice(-1) == '/') {
+            typeClass = 'fa-folder';
+        } else {
+            switch (href.toLowerCase().match(/[^\.]*$/)[0]) {
+                case '7z':
+                case 'ace':
+                case 'arj':
+                case 'bz2':
+                case 'gz':
+                case 'lha':
+                case 'rar':
+                case 'tar':
+                case 'uha':
+                case 'xz':
+                case 'z':
+                case 'zoo':
+                case 'zip':
+                    typeClass = 'fa-archive';
+                    break;
+                case 'iso':
+                case 'nrg':
+                case 'img':
+                case 'cdi':
+                case 'cue':
+                case 'ccd':
+                    typeClass = 'fa-save';
+                    break;
+                case 'doc':
+                case 'docm':
+                case 'docx':
+                case 'gdoc':
+                case 'htm':
+                case 'html':
+                case 'lwp':
+                case 'mcw':
+                case 'odm':
+                case 'odt':
+                case 'ott':
+                case 'omm':
+                case 'pages':
+                case 'pdf':
+                case 'rtf':
+                case 'sdw':
+                case 'stw':
+                case 'sxw':
+                case 'tex':
+                case 'info':
+                case 'txt':
+                case 'wri':
+                case 'xhtml':
+                case 'xml':
+                case 'xps':
+                    typeClass = 'fa-file-text-o';
+                    break;
+                case 'azw':
+                case 'epub':
+                case 'mobi':
+                    typeClass = 'fa-book';
+                    break;
+                case 'abf':
+                case 'afm':
+                case 'bdf':
+                case 'bmf':
+                case 'eot':
+                case 'fnt':
+                case 'fon':
+                case 'mgf':
+                case 'otf':
+                case 'pcf':
+                case 'pfa':
+                case 'pfb':
+                case 'pfm':
+                case 'afm':
+                case 'fond':
+                case 'sfd':
+                case 'snf':
+                case 'tdf':
+                case 'tfm':
+                case 'ttf':
+                case 'ttc':
+                case 'woff':
+                    typeClass = 'fa-font';
+                    break;
+                case 'art':
+                case 'ai':
+                case 'bmp':
+                case 'gif':
+                case 'ico':
+                case 'jpeg':
+                case 'jpg':
+                case 'jp2':
+                case 'pcx':
+                case 'png':
+                case 'psd':
+                case 'raw':
+                case 'svg':
+                case 'tga':
+                case 'tif':
+                case 'tiff':
+                case 'wmf':
+                case 'xcf':
+                    typeClass = 'fa-picture-o';
+                    break;
+                case 'bat':
+                case 'cmd':
+                case 'com':
+                case 'exe':
+                case 'msi':
+                    typeClass = 'fa-windows';
+                    break;
+                case 'aac':
+                case 'asx':
+                case 'flac':
+                case 'm3u':
+                case 'm4a':
+                case 'mid':
+                case 'mod':
+                case 'mp2':
+                case 'mp3':
+                case 'ogg':
+                case 'pls':
+                case 'sng':
+                case 'wav':
+                case 'wma':
+                    typeClass = 'fa-music';
+                    break;
+                case '123':
+                case 'csv':
+                case 'gsheet':
+                case 'gnumeric':
+                case 'ods':
+                case 'ots':
+                case 'qpw':
+                case 'sdc':
+                case 'stc':
+                case 'sxc':
+                case 'wk1':
+                case 'wk3':
+                case 'wk4':
+                case 'wks':
+                case 'wq1':
+                case 'xlk':
+                case 'xls':
+                case 'xlsb':
+                case 'xlsm':
+                case 'xlsx':
+                case 'xlr':
+                case 'xlt':
+                case 'xltm':
+                case 'xlw':
+                    typeClass = 'fa-table';
+                    break;
+                case 'aaf':
+                case '3gp':
+                case 'asf':
+                case 'avchd':
+                case 'avi':
+                case 'cam':
+                case 'flv':
+                case 'm1v':
+                case 'm2v':
+                case 'm4v':
+                case 'mkv':
+                case 'mov':
+                case 'mpe':
+                case 'mpeg':
+                case 'mpg':
+                case 'ogv':
+                case 'rm':
+                case 'swf':
+                case 'wmv':
+                    typeClass = 'fa-film';
+                    break;
+                default:
+                    typeClass = 'fa-file-o';
+                    break;
+            }
+        }
+
+        var append = true;
+        if (href.match(/^\.\./)) {
+            if (window.location.search.match(/\?[^\/]+\/*$/)) {
+                append = false;
+            }
+            href = window.location.search.replace(/[^\/]+\/?$/, '');
+        } else {
+            if (href.match(/\/$/)) {
+                href = window.location.search + '/' + href;
+            } else {
+                href = CONTENTSURL + window.location.search.replace(/^\?/, '/') + href;
+
+            }
+        }
+
+        if (append) {
+            link.setAttribute('href', href);
+            link.innerHTML = '<i class="fa ' + typeClass + '"></i>' + link.innerHTML;
+            li.appendChild(link);
+            list.appendChild(li);
+        }
+    });
+
+    browser.appendChild(list);
+
+});
 
 self.port.on('torrentsList', function(list) {
     var query = document.getElementById('q');
@@ -146,7 +366,7 @@ self.port.on('queuedTorrentsList', function(list) {
         rows += '<tr>';
         rows += '<td class="title">' + list[l].name + '</td>';
         rows += '<td class="peers">' + added_at + '</td>';
-        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="view.html#' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '"><i class="fa fa-download"></i></a> <a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
+        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '"><i class="fa fa-folder-open-o"></i></a> <a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
         rows += '</tr>';
     }
     res.innerHTML += rows;
