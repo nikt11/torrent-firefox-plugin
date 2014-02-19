@@ -592,14 +592,17 @@ body {
 
 #results table td.size {
     font-size: 20px;
+    text-align: center;
 }
 
+#results table td .seeds,
 #results table td.seeds {
     color: #2db428;
     font-size: 20px;
 }
 
-#results table td.peers {
+#results table td.peers,
+#results table td .peers {
     color: #182088;
     font-size: 20px;
 }
@@ -651,7 +654,7 @@ body {
 
 
 #results.list {
-    margin-top: 0;
+    margin-top: 40px;
 }
 
 #results.list tr.pbar,
@@ -833,6 +836,10 @@ body {
     animation-fill-mode: both;
 }
 
+#browser {
+    margin-top: 40px;
+}
+
 #browser li {
     list-style: none;
     padding: 4px 0;
@@ -840,4 +847,64 @@ body {
 
 #browser li i {
     width: 25px;
+}
+
+#browser .filename {
+    display: inline-block;
+    width: 600px;
+}
+
+#menu {
+    display: block;
+    float: right;
+    position: fixed;
+    top: 0;
+    right: 20px;
+    border: solid 1px #eee;
+    overflow: hidden;
+    margin: 4px 0 0;
+    padding: 0;
+    border-top: none;
+}
+
+#menu li {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+#menu li:first-child {
+    border-right: solid 1px #eee;
+}
+
+#menu li a {
+    height: 40px;
+    line-height: 40px;
+    width: 120px;
+    text-align: center;
+    font-size: 20px;
+    color: #1c9a3f;
+    text-decoration: none;
+    display: block;
+}
+
+#menu li a.disabled {
+    color: #333;
+}
+
+.share {
+    margin-bottom: 10px;
+}
+
+.right {
+    float: right;
+}
+
+.ohi {
+    overflow: hidden;
+}
+
+.hobar:hover {
+    background: #eee;
 }

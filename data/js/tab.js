@@ -1,12 +1,13 @@
 self.port.emit('validateAuth', false);
 
-CONTENTSURL = 'http://torrent-frontend1.sys.rootnode.net/get';
+var CONTENTSURL = 'http://torrent-frontend1.sys.rootnode.net/get';
 var invokeQuery = function(value) {
     var query = document.getElementById('q');
     value = value === undefined ? query.value : value;
     query.value = decodeURIComponent(value);
     query.setAttribute('readonly', 'readonly');
     query.className = 'loading';
+    document.body.parentNode.className = 'page-loading';
     self.port.emit('getTorrents', query.value);
     window.location.hash = encodeURIComponent(query.value);
 };
@@ -24,8 +25,8 @@ if (window.location.pathname.match(/manager.html/)) {
     });
 
     document.getElementById('results').addEventListener('click', function(e) {
-        e.preventDefault();
-        if(e.target.parentNode.className == 'download') {
+        if(e.target.parentNode.className == 'download' && e.target.className != 'error') {
+            e.preventDefault();
             e.target.className = 'button loading';
             self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
         }
@@ -36,11 +37,13 @@ if (window.location.pathname.match(/list.html/)) {
     var resizeBars = function() {
         Array.prototype.slice.call(document.querySelectorAll('.pbar .bar .text')).forEach(function(bar) {bar.style.width = bar.parentNode.parentNode.offsetWidth + 'px'; });
     };
-
-    self.port.emit('queuedTorrents');
-    setInterval(function() {
+    var queuedTorrents = function() {
+        document.body.parentNode.className = 'page-loading';
         self.port.emit('queuedTorrents');
-    }, 1 * 60 * 1000);
+    };
+
+    queuedTorrents();
+    setInterval(queuedTorrents, 1 * 60 * 1000);
 
     document.getElementById('results').addEventListener('click', function(e) {
         if(!e.target.parentNode.className.match('disabled')) {
@@ -78,11 +81,23 @@ self.port.on('torrentContents', function(html) {
     var div = document.createElement('div');
     var browser = document.getElementById('browser');
     var list = document.createElement('ul');
+    var li;
 
     div.innerHTML = html;
 
-    Array.prototype.slice.call(div.querySelectorAll('pre a')).forEach(function(link) {
+    li = document.createElement('li');
+    li.innerHTML = '<i class="fa fa-share"></i> Share link: <a href="' + CONTENTSURL + window.location.search.replace(/\/.*/, '').replace('?', '/') + '">' + CONTENTSURL + window.location.search.replace(/\/.*/, '').replace('?', '/') + '</a>';
+    li.className = 'share';
+    list.appendChild(li);
+    li = document.createElement('li');
+    li.innerHTML = '<a href="list.html"><i class="fa fa-list"></i> Back to List</a>';
+    list.appendChild(li);
+
+    Array.prototype.slice.call(div.querySelectorAll('tbody tr')).forEach(function(row) {
+        var link = row.querySelector('td a');
+        var size = row.querySelector('tr td:first-child + td').innerHTML;
         var li = document.createElement('li');
+        li.className = 'ohi hobar';
         var href = link.getAttribute('href');
 
         if (href.slice(-1) == '/') {
@@ -265,6 +280,7 @@ self.port.on('torrentContents', function(html) {
         }
 
         var append = true;
+        var isFile = false;
         if (href.match(/^\.\./)) {
             if (window.location.search.match(/\?[^\/]+\/*$/)) {
                 append = false;
@@ -272,17 +288,27 @@ self.port.on('torrentContents', function(html) {
             href = window.location.search.replace(/[^\/]+\/?$/, '');
         } else {
             if (href.match(/\/$/)) {
+                // folder
                 href = window.location.search + '/' + href;
             } else {
-                href = CONTENTSURL + window.location.search.replace(/^\?/, '/') + href;
-
+                // file
+                href = CONTENTSURL + window.location.search.replace(/^\?/, '/') + '/' + href;
+                isFile = true;
             }
         }
 
         if (append) {
             link.setAttribute('href', href);
+            link.className = 'filename';
             link.innerHTML = '<i class="fa ' + typeClass + '"></i>' + link.innerHTML;
             li.appendChild(link);
+            li.innerHTML += size;
+            if (isFile) {
+                li.innerHTML += ' <a class="right" href="' + href + '?download=1" download><i class="fa fa-download"></i></a>';
+            }
+            if (typeClass == 'fa-film' || typeClass == 'fa-music') {
+                li.innerHTML += ' <a class="right" href="data:application/x-mpegur;base64,' + btoa("#EXTM3U\n" + href) + '" download="playlist.m3u"><i class="fa fa-play-circle"></i></a>';
+            }
             list.appendChild(li);
         }
     });
@@ -301,6 +327,7 @@ self.port.on('torrentsList', function(list) {
     query.className = '';
     search.className = 'results';
     results.className = 'visible';
+    document.body.parentNode.className = '';
 
     res.innerHTML = '';
 
@@ -310,11 +337,11 @@ self.port.on('torrentsList', function(list) {
 
     for(var l = 0; l < list.length; l += 1) {
         rows += '<tr>';
-        rows += '<td class="title"><a href="http://torrents.eu/' + list[l].hash + '" target="_blank">' + list[l].title + '</a></td>';
+        rows += '<td class="title"><a href="http://torrentz.eu/' + list[l].hash + '" target="_blank">' + list[l].title + '</a></td>';
         rows += '<td class="size">' + list[l].size.replace(' ', '') + '</td>';
-        rows += '<td class="seeds">' + list[l].seeds + '</td>';
-        rows += '<td class="peers">' + list[l].peers + '</td>';
-        rows += '<td class="download" id="h-' + list[l].hash + '"><a href="http://torcache.net/torrent/' + list[l].hash + '.torrent" class="button">Download!</a></td>';
+        rows += '<td class="size"><span class="seeds">' + list[l].seeds + '</span>&nbsp;/&nbsp;<span class="peers">' + list[l].peers + '</span></td>';
+        rows += '<td class="size">' + list[l].added_at + '</td>';
+        rows += '<td class="download" id="h-' + list[l].hash + '"><a href="http://torcache.net/torrent/' + list[l].hash + '.torrent" class="button">Download</a></td>';
         rows += '</tr>';
     }
     res.innerHTML += rows;
@@ -324,9 +351,9 @@ self.port.on('queueResult', function(result) {
     var item = document.getElementById('h-' + result.hash);
     if(item) {
         if(result.success) {
-            item.innerHTML = '<span>Queued!</span>';
+            item.innerHTML = '<span>Queued</span>';
         } else {
-            item.innerHTML = '<span class="error">Failed!&nbsp;<abbr title="' + result.message + '">?</abbr></span>';
+            item.innerHTML = '<span class="error"><abbr title="' + result.message + '" style="font-weight: bold;">Failed</abbr></span>';
         }
     }
 });
@@ -350,6 +377,8 @@ self.port.on('queuedTorrentsList', function(list) {
     var bytes_done;
     var size_bytes;
 
+    document.body.parentNode.className = '';
+
     res.innerHTML = '';
 
     if (list.length === 0) {
@@ -362,11 +391,15 @@ self.port.on('queuedTorrentsList', function(list) {
         size_bytes = normalize(list[l].size_bytes);
         down_rate = normalize(list[l].down_rate);
         added_at = new Date(Date.parse(list[l].added_at.replace(' ', 'T'))).toGMTString().replace(/([0-9]) ([0-9])/, '$1<br>$2');
-        rows += '<tr class="pbar"><td colspan="3"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)</div></div></div></td></tr>';
+        if (list[l].bytes_done == list[l].size_bytes) {
+            rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (complete)</div></div></div></td></tr>';
+        } else {
+            rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)</div></div></div></td></tr>';
+        }
         rows += '<tr>';
-        rows += '<td class="title">' + list[l].name + '</td>';
-        rows += '<td class="peers">' + added_at + '</td>';
-        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '"><i class="fa fa-folder-open-o"></i></a> <a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
+        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="http://torrentz.eu/' + list[l].hash + '">hash://' + list[l].hash + '</a></span></td>';
+        rows += '<td class="size">' + added_at + '</td>';
+        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
         rows += '</tr>';
     }
     res.innerHTML += rows;
@@ -386,6 +419,7 @@ self.port.on('removedTorrent', function(response) {
 });
 
 self.port.on('authenticated', function(response) {
+    // alert('s');
     if(window.location.pathname.match(/auth.html/)) {
         if(response.success) {
             window.location.href = 'manager.html';
