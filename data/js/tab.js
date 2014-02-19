@@ -1,6 +1,8 @@
 self.port.emit('validateAuth', false);
 
 var CONTENTSURL = 'http://torrent-frontend1.sys.rootnode.net/get';
+var REFRESH_INTERVAL = 15;
+
 var invokeQuery = function(value) {
     var query = document.getElementById('q');
     value = value === undefined ? query.value : value;
@@ -37,13 +39,12 @@ if (window.location.pathname.match(/list.html/)) {
     var resizeBars = function() {
         Array.prototype.slice.call(document.querySelectorAll('.pbar .bar .text')).forEach(function(bar) {bar.style.width = bar.parentNode.parentNode.offsetWidth + 'px'; });
     };
-    var queuedTorrents = function() {
-        document.body.parentNode.className = 'page-loading';
-        self.port.emit('queuedTorrents');
-    };
 
-    queuedTorrents();
-    setInterval(queuedTorrents, 1 * 60 * 1000);
+    document.body.parentNode.className = 'page-loading';
+    self.port.emit('queuedTorrents');
+    setInterval(function() {
+        self.port.emit('queuedTorrents');
+    }, 1 * REFRESH_INTERVAL * 1000);
 
     document.getElementById('results').addEventListener('click', function(e) {
         if(!e.target.parentNode.className.match('disabled')) {
@@ -264,6 +265,7 @@ self.port.on('torrentContents', function(html) {
                 case 'm4v':
                 case 'mkv':
                 case 'mov':
+                case 'mp4':
                 case 'mpe':
                 case 'mpeg':
                 case 'mpg':
@@ -376,6 +378,7 @@ self.port.on('queuedTorrentsList', function(list) {
     var rows = '';
     var bytes_done;
     var size_bytes;
+    var eta, eta_h = 0, eta_m = 0;
 
     document.body.parentNode.className = '';
 
@@ -390,17 +393,31 @@ self.port.on('queuedTorrentsList', function(list) {
         bytes_done = normalize(list[l].bytes_done);
         size_bytes = normalize(list[l].size_bytes);
         down_rate = normalize(list[l].down_rate);
+        eta = parseInt((list[l].size_bytes - list[l].bytes_done) / (list[l].down_rate < 1 ? 1 : list[l].down_rate), 10);
+
+        if (eta > 3600) {
+            eta_h = parseInt(eta / 3600, 10);
+            eta = eta % 3600;
+        }
+        if (eta > 60) {
+            eta_m = parseInt(eta / 60, 10);
+            eta = eta % 60;
+        }
+
+        eta = (eta_h > 0 ? eta_h + 'h ' : '') + (eta_m > 0 ? eta_m + 'm ' : '') + (isNaN(eta) ? 0 : eta) + 's';
+
+
         added_at = new Date(Date.parse(list[l].added_at.replace(' ', 'T'))).toGMTString().replace(/([0-9]) ([0-9])/, '$1<br>$2');
+        rows += '<tr>';
+        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="http://torrentz.eu/' + list[l].hash + '" target="_blank">hash://' + list[l].hash + '</a></span></td>';
+        rows += '<td class="size" style="font-size: 12px;">' + added_at + '</td>';
+        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
+        rows += '</tr>';
         if (list[l].bytes_done == list[l].size_bytes) {
             rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (complete)</div></div></div></td></tr>';
         } else {
-            rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)</div></div></div></td></tr>';
+            rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s, ' + eta + ' remaining)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s, ' + eta + ' remaining)</div></div></div></td></tr>';
         }
-        rows += '<tr>';
-        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="http://torrentz.eu/' + list[l].hash + '">hash://' + list[l].hash + '</a></span></td>';
-        rows += '<td class="size">' + added_at + '</td>';
-        rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
-        rows += '</tr>';
     }
     res.innerHTML += rows;
     resizeBars();
@@ -411,7 +428,7 @@ self.port.on('removedTorrent', function(response) {
     if(!response.error && response.hash) {
         row = document.getElementById('h-' + response.hash).parentNode;
         row.className = 'hidden';
-        row.previousSibling.className = 'pbar hidden';
+        row.nextSibling.className = 'pbar hidden';
         setTimeout(function() {
             self.port.emit('queuedTorrents');
         }, 1000);
