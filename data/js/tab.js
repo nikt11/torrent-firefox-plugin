@@ -415,7 +415,7 @@ self.port.on('queuedTorrentsList', function(list) {
         if (list[l].bytes_done == list[l].size_bytes) {
             rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (complete)</div></div></div></td></tr>';
         } else {
-            rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s, ' + eta + ' remaining)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s, ' + eta + ' remaining)</div></div></div></td></tr>';
+            rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s' + (list[l].down_rate > 0 ? ', ' + eta + ' remaining' : '') + ')<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s' + (list[l].down_rate > 0 ? ', ' + eta + ' remaining' : '') + ')</div></div></div></td></tr>';
         }
     }
     res.innerHTML += rows;
