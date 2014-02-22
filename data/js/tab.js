@@ -9,7 +9,6 @@ var invokeQuery = function(value) {
     query.value = decodeURIComponent(value);
     query.setAttribute('readonly', 'readonly');
     query.className = 'loading';
-    document.body.parentNode.className = 'page-loading';
     self.port.emit('getTorrents', query.value);
     window.location.hash = encodeURIComponent(query.value);
 };
