@@ -293,7 +293,7 @@ self.port.on('torrentContents', function(html) {
                 href = window.location.search + '/' + href;
             } else {
                 // file
-                href = CONTENTSURL + window.location.search.replace(/^\?/, '/') + '/' + href;
+                href = CONTENTSURL + (window.location.search.replace(/^\?/, '/') + '/' + href).replace(/\/\//g, '/');
                 isFile = true;
             }
         }
