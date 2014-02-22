@@ -308,7 +308,7 @@ self.port.on('torrentContents', function(html) {
                 li.innerHTML += ' <a class="right" href="' + href + '?download=1" download><i class="fa fa-download"></i></a>';
             }
             if (typeClass == 'fa-film' || typeClass == 'fa-music') {
-                li.innerHTML += ' <a class="right" href="data:application/x-mpegur;base64,' + btoa("#EXTM3U\n" + href) + '" download="playlist.m3u"><i class="fa fa-play-circle"></i></a>';
+                li.innerHTML += ' <a class="right" href="data:application/x-mpegur;base64,' + btoa("#EXTM3U\n" + href) + '" download="' + href.replace(/.*\//, '').replace(/\.[^\.]*$/, '') + '.m3u"><i class="fa fa-play-circle"></i></a>';
             }
             list.appendChild(li);
         }
