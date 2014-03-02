@@ -640,14 +640,16 @@ body {
     color: #d51d28;
 }
 
+#browser .noitems,
 #results .noitems td {
     font-size: 40px;
-    opacity: 0.1;
+    opacity: 0.3;
     text-align: center;
     padding: 10% 0;
     line-height: 1.2;
 }
 
+#browser .noitems a,
 #results .noitems a {
     color: #1c9a3f;
 }

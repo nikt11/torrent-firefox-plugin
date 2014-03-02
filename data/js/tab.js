@@ -196,28 +196,47 @@ self.port.on('listInvites', function(invites) {
     document.body.parentNode.className = '';
 });
 
-self.port.on('torrentContents', function(html) {
+self.port.on('torrentContents', function(response) {
     var div = document.createElement('div');
     var browser = document.getElementById('browser');
     var list = document.createElement('ul');
     var li;
 
-    if(!html.authenticated) {
-        window.location.href = 'auth.html';
-        return;
-    }
-
-    html = html.response;
+    html = response.response;
 
     div.innerHTML = html;
 
     li = document.createElement('li');
     li.innerHTML = '<i class="fa fa-share"></i> Share link: <a href="' + CONTENTSURL + window.location.search.replace(/\/.*/, '').replace('?', '/') + '">' + CONTENTSURL + window.location.search.replace(/\/.*/, '').replace('?', '/') + '</a>';
     li.className = 'share';
-    list.appendChild(li);
+    if(html.authenticated) {
+        list.appendChild(li);
+    }
+
     li = document.createElement('li');
     li.innerHTML = '<a href="list.html"><i class="fa fa-list"></i> Back to List</a>';
     list.appendChild(li);
+
+    console.log(response);
+    if(!response.authenticated) {
+        li = document.createElement('li');
+        li.className = 'noitems';
+
+        switch(response.statusCode) {
+            case 410:
+                li.innerHTML = 'Resource has expired.';
+                break;
+            case 403:
+                li.innerHTML = 'Resource has been blocked.';
+                break;
+            default:
+                li.innerHTML = 'Resource is temporary unavailable.';
+        }
+
+        list.appendChild(li);
+        browser.appendChild(list);
+        return;
+    }
 
     Array.prototype.slice.call(div.querySelectorAll('tbody tr')).forEach(function(row) {
         var link = row.querySelector('td a');
