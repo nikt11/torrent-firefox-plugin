@@ -495,7 +495,7 @@ body {
 }
 
 #search.results {
-    top: 124px;
+    top: 182px;
     -moz-transition: top 0.5s;
     transition: top 0.5s;
 }
@@ -666,19 +666,22 @@ body {
 }
 
 #results.list .progress {
-    height: 15px;
-    width: 100%;
-    background: #eee;
+    height: 20px;
+    width: 300px;
+    background: #f5f5f5;
     position: relative;
     text-align: center;
     color: #000;
     font-size: 12px;
-    line-height: 15px;
+    line-height: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1) inset;
 }
 
 #results.list .progress .bar {
-    background: #1c9a3f;
-    height: 15px;
+    background: #5CB85C;
+    height: 20px;
     position: absolute;
     top: 0;
     left: 0;
@@ -689,6 +692,7 @@ body {
 #results.list .progress .bar .text {
     text-align: center;
     color: #fff;
+    width: 300px;
 }
 
 #results.list tbody td.peers {
@@ -856,47 +860,39 @@ body {
 
 #menu {
     display: block;
-    float: right;
-    position: fixed;
-    top: 0;
-    right: 20px;
-    border: solid 1px #eee;
-    overflow: hidden;
-    margin: 4px 0 0;
+    margin: 24px 24px 0 0;
     padding: 0;
     border-top: none;
     background: #fff;
+    overflow: hidden;
 }
 
 #menu li {
     display: block;
-    float: left;
+    float: right;
     margin: 0;
-    padding: 0;
-    border-right: solid 1px #eee;
-}
-
-#menu li:last-child {
-    border-right: none;
+    padding: 0 8px 0;
+    line-height: 33px;
+    color: #aaa;
 }
 
 #menu li a {
-    height: 40px;
-    line-height: 40px;
-    width: 120px;
-    text-align: center;
-    font-size: 20px;
-    color: #1c9a3f;
+    font-size: 16px;
+    color: #333;
     text-decoration: none;
     display: block;
 }
 
-#menu li a i {
-    line-height: 40px;
+#menu li a:hover {
+    color: #1c9a3f;
 }
 
-#menu li a.disabled {
-    color: #333;
+#menu #signout {
+    line-height: 17px;
+}
+
+#menu .divide {
+    border-left: solid 1px #eee;
 }
 
 .share {
@@ -913,4 +909,8 @@ body {
 
 .hobar:hover {
     background: #eee;
+}
+
+#username {
+    text-decoration: underline;
 }

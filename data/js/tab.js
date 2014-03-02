@@ -428,15 +428,22 @@ self.port.on('queuedTorrentsList', function(list) {
 
         added_at = new Date(Date.parse(list[l].added_at.replace(' ', 'T'))).toGMTString().replace(/([0-9]) ([0-9])/, '$1<br>$2');
         rows += '<tr>';
-        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="http://torrentz.eu/' + list[l].hash + '" target="_blank">hash://' + list[l].hash + '</a></span></td>';
-        rows += '<td class="size" style="font-size: 12px;">' + added_at + '</td>';
+        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="http://torrentz.eu/' + list[l].hash + '" target="_blank">hash:&nbsp;' + list[l].hash + '</a></span></td>';
+
+        if (list[l].bytes_done == list[l].size_bytes) {
+            rows += '<td class="bar"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (complete)</div></div></div></td>';
+        } else {
+            rows += '<td class="bar"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s' + (list[l].down_rate > 0 ? ', ' + eta + ' remaining' : '') + ')<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s' + (list[l].down_rate > 0 ? ', ' + eta + ' remaining' : '') + ')</div></div></div></td>';
+        }
+
+        //rows += '<td class="size" style="font-size: 12px;">' + added_at + '</td>';
         rows += '<td class="actions" id="h-' + list[l].hash + '"><a href="#" class="remove"><i class="fa fa-times"></i></a></td>';
         rows += '</tr>';
-        if (list[l].bytes_done == list[l].size_bytes) {
+        /*if (list[l].bytes_done == list[l].size_bytes) {
             rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (complete)</div></div></div></td></tr>';
         } else {
             rows += '<tr class="pbar"><td colspan="4"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s' + (list[l].down_rate > 0 ? ', ' + eta + ' remaining' : '') + ')<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s' + (list[l].down_rate > 0 ? ', ' + eta + ' remaining' : '') + ')</div></div></div></td></tr>';
-        }
+        }*/
     }
     res.innerHTML += rows;
     resizeBars();
@@ -447,7 +454,6 @@ self.port.on('removedTorrent', function(response) {
     if(!response.error && response.hash) {
         row = document.getElementById('h-' + response.hash).parentNode;
         row.className = 'hidden';
-        row.nextSibling.className = 'pbar hidden';
         setTimeout(function() {
             self.port.emit('queuedTorrents');
         }, 1000);
@@ -479,6 +485,12 @@ self.port.on('unauthenticated', function() {
     window.location.href = 'auth.html';
 });
 
+self.port.on('authData', function(response) {
+    if(response && document.getElementById('username')) {
+        document.getElementById('username').textContent = response.login;
+    }
+});
+
 /* Global event observers */
 
 if(document.getElementById('signout')) {
@@ -488,3 +500,5 @@ if(document.getElementById('signout')) {
         self.port.emit('invalidateAuth');
     });
 }
+
+self.port.emit('getAuthData');
