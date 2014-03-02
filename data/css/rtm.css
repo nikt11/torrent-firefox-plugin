@@ -719,6 +719,20 @@ body {
     cursor: default !important;
 }
 
+#results tr.expired {
+    opacity: 0.5;
+}
+
+#results tr.expired.not {
+    opacity: 1;
+}
+
+#results caption {
+    text-align: left;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
 #wrapper.auth {
     width: 320px;
     margin: 0 auto;
@@ -776,7 +790,39 @@ body {
     font-size: 13px;
 }
 
-#login-error strong {
+#login-error.valid {
+    border-left-color: #1c9a3f;
+}
+
+#auth .form-group {
+    overflow: hidden;
+    transition: height 1s ease-in-out;
+}
+
+#auth .invisble {
+    height: 0 !important;
+    transition: height 1s ease-in-out;
+}
+
+#auth #signin {
+    height: 66px;
+}
+
+#auth #register {
+    height: 132px;
+}
+
+#auth .link {
+    line-height: 30px;
+}
+
+#login-error strong:before {
+    content: "Error";
+    font-weight: 600;
+}
+
+#login-error.valid strong:before {
+    content: "Success";
     font-weight: 600;
 }
 
@@ -880,7 +926,7 @@ body {
     font-size: 16px;
     color: #333;
     text-decoration: none;
-    display: block;
+    display: inline-block;
 }
 
 #menu li a:hover {
@@ -893,6 +939,26 @@ body {
 
 #menu .divide {
     border-left: solid 1px #eee;
+}
+
+#userData {
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+#userData dt {
+    float: left;
+    clear: left;
+    width: 300px;
+    margin-right: 20px;
+    font-weight: bold;
+    text-align: right;
+    padding: 10px 0;
+}
+
+#userData dd {
+    padding: 10px 0;
+    float: left;
 }
 
 .share {
@@ -909,8 +975,4 @@ body {
 
 .hobar:hover {
     background: #eee;
-}
-
-#username {
-    text-decoration: underline;
 }

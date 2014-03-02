@@ -10,14 +10,24 @@
     <div id="wrapper" class="auth">
         <h1 class="project-logo"><a href="http://rootnode.net/torrent"></a></h1>
         <div id="login-error" style="display: none;">
-            <strong>Error</strong> : <span id="login-error-message"></span>
+            <strong></strong> : <span id="login-error-message"></span>
         </div>
         <form action="#/auth" id="auth">
             <label for="login">Username</label>
-            <input id="login" type="text" name="login" required>
-            <label for="password">Password</label>
-            <input id="password" type="password" name="login" required>
-            <button type="submit" class="button" id="submit-auth">Login</button>
+            <input id="login" type="text" name="name" tabindex="1" required>
+            <div id="signin" class="form-group">
+                <label for="password">Password</label>
+                <input id="password" type="password" tabindex="2" name="password">
+            </div>
+            <div id="register" class="invisble form-group">
+                <label for="email">E-mail</label>
+                <input id="email" type="email" tabindex="3" name="mail">
+                <label for="invitekey">Invitation key</label>
+                <input id="invitekey" type="text" tabindex="4" name="invite_key">
+            </div>
+            <button type="submit" class="button signin" id="submit-auth">Login</button>
+            <a href="#" id="link-register" class="link">Register</a>
+            <a href="#" id="link-signin" class="link" style="display: none">Sign in</a>
         </form>
     </div>
     <div id="loadingmask"></div>

@@ -69,13 +69,44 @@ if (window.location.pathname.match(/auth.html/)) {
     self.port.emit('validateAuth', false);
 
     document.getElementById('auth').addEventListener('submit', function(e) {
+        var submitButton = document.getElementById('submit-auth');
         e.preventDefault();
-        document.getElementById('submit-auth').className = 'button loading';
+        submitButton.className += ' loading';
         document.getElementById('auth').className = '';
-        self.port.emit('validateAuth', {
-            login: document.getElementById('login').value,
-            password: document.getElementById('password').value
-        });
+        if(submitButton.className.match(/register/)) {
+            self.port.emit('registerUser', {
+                name: document.getElementById('login').value,
+                mail: document.getElementById('email').value,
+                invite_key: document.getElementById('invitekey').value
+            });
+        } else {
+            self.port.emit('validateAuth', {
+                login: document.getElementById('login').value,
+                password: document.getElementById('password').value
+            });
+        }
+    });
+
+    document.getElementById('link-register').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('link-signin').style.display = 'inline';
+        document.getElementById('link-register').style.display = 'none';
+        document.getElementById('register').className = 'form-group';
+        document.getElementById('signin').className = 'form-group invisble';
+        document.getElementById('password').setAttribute('tabindex', '99');
+        document.getElementById('submit-auth').textContent = 'Register';
+        document.getElementById('submit-auth').className = 'button register';
+    });
+
+    document.getElementById('link-signin').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('link-register').style.display = 'inline';
+        document.getElementById('link-signin').style.display = 'none';
+        document.getElementById('password').setAttribute('tabindex', '2');
+        document.getElementById('signin').className = 'form-group';
+        document.getElementById('register').className = 'form-group invisble';
+        document.getElementById('submit-auth').textContent = 'Login';
+        document.getElementById('submit-auth').className = 'button signin';
     });
 }
 
@@ -84,6 +115,86 @@ if (window.location.pathname.match(/view.html/)) {
 
     self.port.emit('getTorrentContents', {path: path});
 }
+
+if (window.location.pathname.match(/invites.html/)) {
+    document.body.parentNode.className = 'page-loading';
+    self.port.emit('getInviteCodes');
+}
+
+if (window.location.pathname.match(/profile.html/)) {
+    document.body.parentNode.className = 'page-loading';
+    self.port.emit('getUserData');
+}
+
+self.port.on('userRegistered', function(data) {
+    if(data.error) {
+        document.getElementById('auth').className = 'shake';
+        document.getElementById('submit-auth').className = 'button register';
+        document.getElementById('login-error').style.display = 'block';
+        document.getElementById('login-error').className = '';
+        document.getElementById('login-error-message').innerHTML = data.error;
+    } else {
+        document.getElementById('login-error').style.display = 'block';
+        document.getElementById('login-error-message').innerHTML = 'Your password is <b>' + data.password + '</b>';
+        document.getElementById('login-error').className = 'valid';
+        document.getElementById('link-register').style.display = 'inline';
+        document.getElementById('link-signin').style.display = 'none';
+        document.getElementById('password').setAttribute('tabindex', '2');
+        document.getElementById('signin').className = 'form-group';
+        document.getElementById('register').className = 'form-group invisble';
+        document.getElementById('submit-auth').textContent = 'Login';
+        document.getElementById('submit-auth').className = 'button signin';
+    }
+});
+
+self.port.on('userData', function(userData) {
+    var results = document.getElementById('results');
+    var res = results.querySelector('tbody');
+    var rows = '';
+    var payments = userData.payments;
+
+    res.innerHTML = '';
+
+    document.getElementById('userDataName').textContent = userData.name;
+    document.getElementById('userDataEmail').textContent = userData.mail;
+    document.getElementById('userDataExpires').textContent = userData.expires_at;
+
+    if (payments.length === 0) {
+        rows += '<tr class="noitems"><td colspan="4">No payments.</td></tr>';
+    }
+
+    for(var p = 0; p < payments.length; p += 1) {
+        rows += '<tr>';
+        rows += '<td class="title">' + payments[p].paid_at + '</td>';
+        rows += '<td class="size">' + payments[p].price + '&nbsp;' + payments[p].currency + '</td>';
+        rows += '<td class="size">' + payments[p].last_expires_at + '</td>';
+        rows += '<td class="size">' + payments[p].next_expires_at + '</td>';
+        rows += '</tr>';
+    }
+    res.innerHTML += rows;
+    document.body.parentNode.className = '';
+});
+
+self.port.on('listInvites', function(invites) {
+    var results = document.getElementById('results');
+    var res = results.querySelector('tbody');
+    var rows = '';
+
+    res.innerHTML = '';
+
+    if (invites.length === 0) {
+        rows += '<tr class="noitems"><td colspan="2">No invite codes available at the moment.</td></tr>';
+    }
+
+    for(var i = 0; i < invites.length; i += 1) {
+        rows += '<tr class="expired' + (invites[i].is_expired === '1' ? '' : ' not') + '">';
+        rows += '<td class="title">' + invites[i].invite_key + '</td>';
+        rows += '<td class="size">' + (invites[i].used_by_uid ? invites[i].used_by_uid : '') + '</td>';
+        rows += '</tr>';
+    }
+    res.innerHTML += rows;
+    document.body.parentNode.className = '';
+});
 
 self.port.on('torrentContents', function(html) {
     var div = document.createElement('div');
@@ -469,6 +580,7 @@ self.port.on('authenticated', function(response) {
                 document.getElementById('auth').className = 'shake';
                 document.getElementById('submit-auth').className = 'button';
                 document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-error').className = '';
                 document.getElementById('login-error-message').innerHTML = response.message;
             }
         }
