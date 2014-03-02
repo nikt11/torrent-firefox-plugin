@@ -25,18 +25,19 @@ if (window.location.pathname.match(/manager.html/)) {
             window.location.href = 'auth.html';
             return;
         }
-        document.getElementById('search').addEventListener('submit', function(e) {
-            e.preventDefault();
-            invokeQuery();
-        });
+    });
 
-        document.getElementById('results').addEventListener('click', function(e) {
-            if(e.target.parentNode.className == 'download' && e.target.className != 'error') {
-                e.preventDefault();
-                e.target.className = 'button loading';
-                self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
-            }
-        });
+    document.getElementById('search').addEventListener('submit', function(e) {
+        e.preventDefault();
+        invokeQuery();
+    });
+
+    document.getElementById('results').addEventListener('click', function(e) {
+        if(e.target.parentNode.className == 'download' && e.target.className != 'error') {
+            e.preventDefault();
+            e.target.className = 'button loading';
+            self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
+        }
     });
 }
 
@@ -478,10 +479,12 @@ self.port.on('unauthenticated', function() {
     window.location.href = 'auth.html';
 });
 
-/* Element event observers */
+/* Global event observers */
 
-document.getElementById('signout').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.body.parentNode.className = 'page-loading';
-    self.port.emit('invalidateAuth');
-});
+if(document.getElementById('signout')) {
+    document.getElementById('signout').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.parentNode.className = 'page-loading';
+        self.port.emit('invalidateAuth');
+    });
+}
