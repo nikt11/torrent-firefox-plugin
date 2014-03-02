@@ -873,10 +873,11 @@ body {
     float: left;
     margin: 0;
     padding: 0;
+    border-right: solid 1px #eee;
 }
 
-#menu li:first-child {
-    border-right: solid 1px #eee;
+#menu li:last-child {
+    border-right: none;
 }
 
 #menu li a {
@@ -888,6 +889,10 @@ body {
     color: #1c9a3f;
     text-decoration: none;
     display: block;
+}
+
+#menu li a i {
+    line-height: 40px;
 }
 
 #menu li a.disabled {

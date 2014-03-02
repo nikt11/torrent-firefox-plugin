@@ -20,17 +20,23 @@ if (window.location.pathname.match(/manager.html/) && window.location.hash) {
 // TODO: cleanup
 
 if (window.location.pathname.match(/manager.html/)) {
-    document.getElementById('search').addEventListener('submit', function(e) {
-        e.preventDefault();
-        invokeQuery();
-    });
-
-    document.getElementById('results').addEventListener('click', function(e) {
-        if(e.target.parentNode.className == 'download' && e.target.className != 'error') {
-            e.preventDefault();
-            e.target.className = 'button loading';
-            self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
+    self.port.emit('validateAuth', function(response) {
+        if(!response.authenticated) {
+            window.location.href = 'auth.html';
+            return;
         }
+        document.getElementById('search').addEventListener('submit', function(e) {
+            e.preventDefault();
+            invokeQuery();
+        });
+
+        document.getElementById('results').addEventListener('click', function(e) {
+            if(e.target.parentNode.className == 'download' && e.target.className != 'error') {
+                e.preventDefault();
+                e.target.className = 'button loading';
+                self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
+            }
+        });
     });
 }
 
@@ -59,6 +65,7 @@ if (window.location.pathname.match(/list.html/)) {
 
 if (window.location.pathname.match(/auth.html/)) {
     document.body.parentNode.className = 'page-loading';
+    self.port.emit('validateAuth', false);
 
     document.getElementById('auth').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -74,7 +81,7 @@ if (window.location.pathname.match(/auth.html/)) {
 if (window.location.pathname.match(/view.html/)) {
     var path = window.location.search.replace(/^\?/, '/');
 
-    self.port.emit('getTorrentContents', {path: path})
+    self.port.emit('getTorrentContents', {path: path});
 }
 
 self.port.on('torrentContents', function(html) {
@@ -82,6 +89,13 @@ self.port.on('torrentContents', function(html) {
     var browser = document.getElementById('browser');
     var list = document.createElement('ul');
     var li;
+
+    if(!html.authenticated) {
+        window.location.href = 'auth.html';
+        return;
+    }
+
+    html = html.response;
 
     div.innerHTML = html;
 
@@ -378,6 +392,11 @@ self.port.on('queuedTorrentsList', function(list) {
     var bytes_done;
     var size_bytes;
     var eta, eta_h = 0, eta_m = 0;
+    if (!list.authenticated) {
+        window.location.href = 'auth.html';
+        return;
+    }
+    list = list.response;
 
     document.body.parentNode.className = '';
 
@@ -435,7 +454,6 @@ self.port.on('removedTorrent', function(response) {
 });
 
 self.port.on('authenticated', function(response) {
-    // alert('s');
     if(window.location.pathname.match(/auth.html/)) {
         if(response.success) {
             window.location.href = 'manager.html';
@@ -454,4 +472,16 @@ self.port.on('authenticated', function(response) {
     }
 
     document.body.parentNode.className = '';
+});
+
+self.port.on('unauthenticated', function() {
+    window.location.href = 'auth.html';
+});
+
+/* Element event observers */
+
+document.getElementById('signout').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.body.parentNode.className = 'page-loading';
+    self.port.emit('invalidateAuth');
 });
