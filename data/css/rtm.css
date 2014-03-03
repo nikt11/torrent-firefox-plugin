@@ -593,24 +593,24 @@ body {
 
 #results table td.title {
     text-align: left;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 #results table td.size {
-    font-size: 20px;
+    font-size: 16px;
     text-align: center;
 }
 
 #results table td .seeds,
 #results table td.seeds {
     color: #2db428;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 #results table td.peers,
 #results table td .peers {
     color: #182088;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .button,
@@ -807,6 +807,7 @@ body {
 #auth .form-group {
     overflow: hidden;
     transition: height 1s ease-in-out;
+    margin-bottom: 6px;
 }
 
 #auth .invisble {
@@ -819,7 +820,6 @@ body {
 }
 
 #auth #register {
-    height: 132px;
 }
 
 #auth .link {
