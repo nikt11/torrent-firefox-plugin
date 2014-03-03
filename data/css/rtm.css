@@ -669,7 +669,8 @@ body {
 
 #results.list .progress {
     height: 20px;
-    width: 300px;
+    min-width: 300px;
+    width: 100%;
     background: #f5f5f5;
     position: relative;
     text-align: center;
@@ -694,7 +695,8 @@ body {
 #results.list .progress .bar .text {
     text-align: center;
     color: #fff;
-    width: 300px;
+    min-width: 300px;
+    width: 100%;
 }
 
 #results.list tbody td.peers {

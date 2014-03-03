@@ -43,10 +43,13 @@ if (window.location.pathname.match(/manager.html/)) {
 
 if (window.location.pathname.match(/list.html/)) {
     var resizeBars = function() {
-        Array.prototype.slice.call(document.querySelectorAll('.pbar .bar .text')).forEach(function(bar) {bar.style.width = bar.parentNode.parentNode.offsetWidth + 'px'; });
+        Array.prototype.slice.call(document.getElementById('results').querySelectorAll('.progress .text')).forEach(function(p) {
+            p.style.width = p.parentNode.parentNode.offsetWidth.toString() + 'px';
+        });
     };
 
     document.body.parentNode.className = 'page-loading';
+
     self.port.emit('queuedTorrents');
     setInterval(function() {
         self.port.emit('queuedTorrents');
