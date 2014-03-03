@@ -33,7 +33,7 @@ if (window.location.pathname.match(/manager.html/)) {
     });
 
     document.getElementById('results').addEventListener('click', function(e) {
-        if(e.target.parentNode.className == 'download' && e.target.className != 'error') {
+        if(e.target.parentNode.className == 'download' && e.target.className != 'error' && e.target.className != 'info') {
             e.preventDefault();
             e.target.className = 'button loading';
             self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
@@ -497,7 +497,7 @@ self.port.on('queueResult', function(result) {
     var item = document.getElementById('h-' + result.hash);
     if(item) {
         if(result.success) {
-            item.innerHTML = '<span>Queued</span>';
+            item.innerHTML = '<span class="info">Queued</span>';
         } else {
             item.innerHTML = '<span class="error"><abbr title="' + result.message + '" style="font-weight: bold;">Failed</abbr></span>';
         }
