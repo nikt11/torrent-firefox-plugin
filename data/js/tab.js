@@ -481,7 +481,7 @@ self.port.on('torrentsList', function(list) {
     var rows = '';
     query.removeAttribute('readonly');
     query.className = '';
-    search.className = 'results';
+    search.className = search.className.match(/complete/) ? 'results complete' : 'results';
     results.className = 'visible';
     document.body.parentNode.className = '';
 
