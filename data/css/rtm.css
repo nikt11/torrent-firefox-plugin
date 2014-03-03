@@ -500,6 +500,11 @@ body {
     transition: top 0.5s;
 }
 
+#search.results.complete {
+    position: static;
+    margin: 0 0 -104px
+}
+
 #search input {
     border: none;
     border-bottom: 1px solid #eee;

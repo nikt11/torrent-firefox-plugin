@@ -39,6 +39,13 @@ if (window.location.pathname.match(/manager.html/)) {
             self.port.emit('queueTorrent', {url: e.target.getAttribute('href'), hash: e.target.parentNode.getAttribute('id').replace('h-', '')});
         }
     });
+
+    document.getElementById('search').addEventListener('transitionend', function(e) {
+        console.log(e);
+        if(e.target.className.match(/result/)) {
+            e.target.className += ' complete';
+        }
+    }, false);
 }
 
 if (window.location.pathname.match(/list.html/)) {
