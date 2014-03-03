@@ -588,6 +588,7 @@ body {
 
 #results table td.title {
     text-align: left;
+    font-size: 20px;
 }
 
 #results table td.size {
