@@ -475,6 +475,10 @@ body {
     margin: 0 auto;
 }
 
+#form-wrap{
+height:145px;
+}
+
 #search {
     position: fixed;
     top: 50%;
@@ -500,8 +504,8 @@ body {
 }
 
 #search.results.complete {
-    position: static;
-    margin: 0 0 -114px;
+    position:static;
+    margin-top:0px;
 }
 
 #search input {
@@ -562,7 +566,6 @@ body {
 }
 
 #results {
-    margin-top: 145px;
     max-width: 1000px;
     overflow: auto;
 }
