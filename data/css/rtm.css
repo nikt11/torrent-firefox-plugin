@@ -501,7 +501,7 @@ body {
 
 #search.results.complete {
     position: static;
-    margin: 0 0 -118px;
+    margin: 0 0 -114px;
 }
 
 #search input {
@@ -959,7 +959,7 @@ body {
     float: left;
     clear: left;
     width: 300px;
-    margin-right: 20px;
+    margin-right: 0px;
     font-weight: bold;
     text-align: right;
     padding: 10px 0;
