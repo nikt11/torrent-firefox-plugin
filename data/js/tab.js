@@ -1,6 +1,6 @@
 //self.port.emit('validateAuth', false);
 
-var CONTENTSURL = 'http://torrent-frontend1.sys.rootnode.net/get';
+var CONTENTSURL = 'https://torrent.rootnode.net/get';
 var REFRESH_INTERVAL = 15;
 
 var invokeQuery = function(value) {
