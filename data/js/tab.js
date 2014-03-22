@@ -199,7 +199,7 @@ self.port.on('listInvites', function(invites) {
     for(var i = 0; i < invites.length; i += 1) {
         rows += '<tr class="expired' + (invites[i].is_expired === '1' ? '' : ' not') + '">';
         rows += '<td class="title">' + invites[i].invite_key + '</td>';
-        rows += '<td class="size">' + (invites[i].used_by_uid ? invites[i].used_by_uid : '') + '</td>';
+        rows += '<td class="size">' + (invites[i].mail ? invites[i].mail : '') + '</td>';
         rows += '</tr>';
     }
     res.innerHTML += rows;
