@@ -219,9 +219,7 @@ self.port.on('torrentContents', function(response) {
     li = document.createElement('li');
     li.innerHTML = '<i class="fa fa-share"></i> Share link: <a href="' + CONTENTSURL + window.location.search.replace(/\/.*/, '').replace('?', '/') + '">' + CONTENTSURL + window.location.search.replace(/\/.*/, '').replace('?', '/') + '</a>';
     li.className = 'share';
-    if(html.authenticated) {
-        list.appendChild(li);
-    }
+    list.appendChild(li);
 
     li = document.createElement('li');
     li.innerHTML = '<a href="list.html"><i class="fa fa-list"></i> Back to List</a>';
