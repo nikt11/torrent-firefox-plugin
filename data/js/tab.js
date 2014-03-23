@@ -225,7 +225,6 @@ self.port.on('torrentContents', function(response) {
     li.innerHTML = '<a href="list.html"><i class="fa fa-list"></i> Back to List</a>';
     list.appendChild(li);
 
-    console.log(response);
     if(!response.authenticated) {
         li = document.createElement('li');
         li.className = 'noitems';
