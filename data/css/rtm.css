@@ -691,7 +691,8 @@ height:145px;
 }
 
 #results.list .progress .bar {
-    background: #5CB85C;
+    /*background: #5CB85C;*/
+    background: #10A650;
     height: 20px;
     position: absolute;
     top: 0;
