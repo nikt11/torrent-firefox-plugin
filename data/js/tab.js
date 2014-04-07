@@ -1,7 +1,7 @@
 //self.port.emit('validateAuth', false);
 
 var CONTENTSURL = 'https://torrent.rootnode.net/get';
-var REFRESH_INTERVAL = 15;
+var REFRESH_INTERVAL = 10;
 
 var invokeQuery = function(value) {
     var query = document.getElementById('q');
@@ -527,9 +527,12 @@ self.port.on('queuedTorrentsList', function(list) {
     var results = document.getElementById('results');
     var res = results.querySelector('tbody');
     var rows = '';
-    var bytes_done;
-    var size_bytes;
-    var eta, eta_h = 0, eta_m = 0;
+    var bytes_done = 0;
+    var size_bytes = 0;
+    var eta = 0;
+    var eta_m;
+    var eta_h;
+
     if (!list.authenticated) {
         window.location.href = 'auth.html';
         return;
@@ -549,6 +552,9 @@ self.port.on('queuedTorrentsList', function(list) {
         bytes_done = normalize(list[l].bytes_done);
         size_bytes = normalize(list[l].size_bytes);
         down_rate = normalize(list[l].down_rate);
+
+        eta_m = 0;
+        eta_h = 0;
         eta = parseInt((list[l].size_bytes - list[l].bytes_done) / (list[l].down_rate < 1 ? 1 : list[l].down_rate), 10);
 
         if (eta > 3600) {
@@ -561,7 +567,6 @@ self.port.on('queuedTorrentsList', function(list) {
         }
 
         eta = (eta_h > 0 ? eta_h + 'h ' : '') + (eta_m > 0 ? eta_m + 'm ' : '') + (isNaN(eta) ? 0 : eta) + 's';
-
 
         added_at = new Date(Date.parse(list[l].added_at.replace(' ', 'T'))).toGMTString().replace(/([0-9]) ([0-9])/, '$1<br>$2');
         rows += '<tr>';
