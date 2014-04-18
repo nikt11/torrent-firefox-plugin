@@ -988,3 +988,19 @@ height:145px;
 .hobar:hover {
     background: #eee;
 }
+
+#form-footer {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+}
+
+#form-footer a {
+    color: #aaa;
+    text-decoration: none;
+}
+
+#form-footer a:hover {
+    text-decoration: underline;
+    color: #999;
+}
