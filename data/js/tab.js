@@ -490,7 +490,7 @@ self.port.on('torrentsList', function(list) {
 
     for(var l = 0; l < list.length; l += 1) {
         rows += '<tr>';
-        rows += '<td class="title"><a href="http://torrentz.eu/' + list[l].hash + '" target="_blank">' + list[l].title + '</a></td>';
+        rows += '<td class="title"><a href="https://torrentz.ch/' + list[l].hash + '" target="_blank">' + list[l].title + '</a></td>';
         rows += '<td class="size">' + list[l].size.replace(' ', '') + '</td>';
         rows += '<td class="size"><span class="seeds">' + list[l].seeds + '</span>&nbsp;/&nbsp;<span class="peers">' + list[l].peers + '</span></td>';
         rows += '<td class="size">' + list[l].added_at + '</td>';
@@ -570,7 +570,7 @@ self.port.on('queuedTorrentsList', function(list) {
 
         added_at = new Date(Date.parse(list[l].added_at.replace(' ', 'T'))).toGMTString().replace(/([0-9]) ([0-9])/, '$1<br>$2');
         rows += '<tr>';
-        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="http://torrentz.eu/' + list[l].hash + '" target="_blank">hash:&nbsp;' + list[l].hash + '</a></span></td>';
+        rows += '<td class="title"><a href="view.html?' + list[l].url_hash + '" class="download' + (list[l].bytes_done !== list[l].size_bytes ? ' disabled' : '') + '">' + list[l].name + '</a> <span style="display: block; font-size: 12px;"><a href="https://torrentz.ch/' + list[l].hash + '" target="_blank">hash:&nbsp;' + list[l].hash + '</a></span></td>';
 
         if (list[l].bytes_done == list[l].size_bytes) {
             rows += '<td class="bar"><div class="progress">' + bytes_done + ' / ' + size_bytes + ' (' + down_rate + '/s)<div class="bar" style="width: ' + (list[l].bytes_done / list[l].size_bytes * 100) + '%"><div class="text">' + bytes_done + ' / ' + size_bytes + ' (complete)</div></div></div></td>';
