@@ -494,7 +494,7 @@ self.port.on('torrentsList', function(list) {
         rows += '<td class="size">' + list[l].size.replace(' ', '') + '</td>';
         rows += '<td class="size"><span class="seeds">' + list[l].seeds + '</span>&nbsp;/&nbsp;<span class="peers">' + list[l].peers + '</span></td>';
         rows += '<td class="size">' + list[l].added_at + '</td>';
-        rows += '<td class="download" id="h-' + list[l].hash + '"><a href="http://torcache.net/torrent/' + list[l].hash + '.torrent" class="button">Download</a></td>';
+        rows += '<td class="download" id="h-' + list[l].hash + '"><a href="https://torcache.net/torrent/' + list[l].hash + '.torrent" class="button">Download</a></td>';
         rows += '</tr>';
     }
     res.innerHTML += rows;
